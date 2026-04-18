@@ -1,0 +1,26 @@
+{
+  "description": "Hand-curated list of UK online pharmacies registered with the General Pharmaceutical Council (GPhC). Used as a positive-match whitelist in the URL risk checker. Expand this list by cross-referencing https://www.pharmacyregulation.org/registers/pharmacy",
+  "last_updated": "2026-04-15",
+  "domains": [
+    "boots.com",
+    "pharmacy2u.co.uk",
+    "well.co.uk",
+    "lloydspharmacy.com",
+    "superdrug.com",
+    "expresschemist.co.uk",
+    "chemist-4-u.com",
+    "pharmacyfirst.co.uk",
+    "chemistdirect.co.uk",
+    "oxfordonlinepharmacy.co.uk",
+    "thepharmacy.co.uk",
+    "simpleonlinepharmacy.co.uk",
+    "pharmica.co.uk",
+    "weldricks.co.uk",
+    "numarkpharmacies.com",
+    "rowlandspharmacy.co.uk",
+    "cohens-chemist.co.uk",
+    "dayLewis.co.uk",
+    "clickpharmacy.co.uk",
+    "dpharmacy.co.uk"
+  ]
+}

@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+/* Palette — deliberately narrow.
+   Primary navy is the only brand colour used in chrome (header/footer/links).
+   Action-green is reserved for the single most important CTA per screen.
+   Everything else is ink + greys so information density, not decoration,
+   carries the hierarchy. */
+@theme inline {
+  --color-primary: #0b3d91;          /* trust navy — UK-gov adjacent */
+  --color-primary-hover: #092f70;
+  --color-primary-light: #eaf0fb;    /* accent pill bg, link hover wash */
+  --color-primary-border: #c8d6ee;
+
+  --color-action: #00784a;           /* GOV.UK-ish green — primary CTA */
+  --color-action-hover: #005a38;
+
+  --color-danger: #b3261e;
+  --color-danger-light: #fbe9e7;
+  --color-warning: #8a4b00;          /* ochre, not yellow — reads medical */
+  --color-warning-light: #fff4e5;
+  --color-success: #00784a;
+  --color-success-light: #e6f4ec;
+
+  --color-ink: #0b1020;              /* body + headings */
+  --color-ink-muted: #4a5362;        /* secondary text */
+  --color-ink-faint: #7b8391;        /* captions, timestamps */
+  --color-line: #e4e7eb;             /* default borders */
+  --color-line-strong: #c8ccd1;      /* dividers between sections */
+  --color-surface: #ffffff;
+  --color-canvas: #f7f8fa;           /* page background */
+
+  --font-sans: var(--font-inter);
+}
+
+html, body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Tighter display type for hero headlines — default Inter tracking
+   at 48px+ looks loose and marketing-y. */
+.display {
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+/* Inline link style used in body copy (not in nav/buttons).
+   Solid underline with offset matches NHS.uk / GOV.UK conventions. */
+.prose-link {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.prose-link:hover {
+  color: var(--color-primary-hover);
+  text-decoration-thickness: 2px;
+}
+
+/* Focus ring — visible keyboard focus is a public-service requirement.
+   Matches GOV.UK yellow-on-black focus treatment, toned down. */
+*:focus-visible {
+  outline: 2px solid #f5c518;
+  outline-offset: 2px;
+}

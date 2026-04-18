@@ -1,0 +1,27 @@
+# Root-level ignores. Each sub-project has its own .gitignore that
+# handles node_modules/, .venv/, .next/, model weights, training images,
+# etc. — this file only covers repo-level things that live above those
+# sub-projects or cut across both.
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Claude CLI local preferences + plan cache (per-developer, not shared).
+# launch.json is kept because it documents the dev-server ports.
+.claude/settings.local.json
+.claude/plans/
+
+# Env files anywhere (defense in depth — sub-ignores already catch these)
+.env
+.env.local
+.env.*.local
+
+# Anything ending in .log at the root
+*.log

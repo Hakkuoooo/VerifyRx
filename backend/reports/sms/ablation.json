@@ -1,0 +1,589 @@
+{
+  "generated_at": "2026-04-18T22:30:46+00:00",
+  "splits_run": [
+    "ood",
+    "uci"
+  ],
+  "rows": [
+    {
+      "model": "majority",
+      "split": "ood",
+      "n": 30,
+      "accuracy": 0.5,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "confusion_matrix": {
+        "tp": 0,
+        "tn": 15,
+        "fp": 0,
+        "fn": 15
+      },
+      "notes": "always predicts legitimate",
+      "per_category": {
+        "conversational": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "free-trial-offer": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 3
+        },
+        "gp-legitimate": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "illicit-marketplace": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 3
+        },
+        "logistics-legitimate": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "nhs-impersonation": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 3
+        },
+        "personal-mentions-meds": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "pharmacy-impersonation": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 3
+        },
+        "pharmacy-operational": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "regulator-impersonation": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 3
+        }
+      }
+    },
+    {
+      "model": "keyword_rule",
+      "split": "ood",
+      "n": 30,
+      "accuracy": 0.8667,
+      "precision": 1.0,
+      "recall": 0.7333,
+      "f1": 0.8462,
+      "confusion_matrix": {
+        "tp": 11,
+        "tn": 15,
+        "fp": 0,
+        "fn": 4
+      },
+      "notes": "25 hand-picked pharma-scam regexes",
+      "per_category": {
+        "conversational": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "free-trial-offer": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1": 0.8,
+          "tp": 2,
+          "tn": 0,
+          "fp": 0,
+          "fn": 1
+        },
+        "gp-legitimate": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "illicit-marketplace": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "logistics-legitimate": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "nhs-impersonation": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1": 0.8,
+          "tp": 2,
+          "tn": 0,
+          "fp": 0,
+          "fn": 1
+        },
+        "personal-mentions-meds": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "pharmacy-impersonation": {
+          "n": 3,
+          "accuracy": 0.3333,
+          "precision": 1.0,
+          "recall": 0.3333,
+          "f1": 0.5,
+          "tp": 1,
+          "tn": 0,
+          "fp": 0,
+          "fn": 2
+        },
+        "pharmacy-operational": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "regulator-impersonation": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        }
+      }
+    },
+    {
+      "model": "pretrained_hub",
+      "split": "ood",
+      "n": 30,
+      "accuracy": 0.6667,
+      "precision": 0.8571,
+      "recall": 0.4,
+      "f1": 0.5455,
+      "confusion_matrix": {
+        "tp": 6,
+        "tn": 14,
+        "fp": 1,
+        "fn": 9
+      },
+      "notes": "mrm8488/bert-tiny-finetuned-sms-spam-detection",
+      "per_category": {
+        "conversational": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "free-trial-offer": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 3
+        },
+        "gp-legitimate": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 2,
+          "fp": 1,
+          "fn": 0
+        },
+        "illicit-marketplace": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1": 0.8,
+          "tp": 2,
+          "tn": 0,
+          "fp": 0,
+          "fn": 1
+        },
+        "logistics-legitimate": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "nhs-impersonation": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1": 0.8,
+          "tp": 2,
+          "tn": 0,
+          "fp": 0,
+          "fn": 1
+        },
+        "personal-mentions-meds": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "pharmacy-impersonation": {
+          "n": 3,
+          "accuracy": 0.3333,
+          "precision": 1.0,
+          "recall": 0.3333,
+          "f1": 0.5,
+          "tp": 1,
+          "tn": 0,
+          "fp": 0,
+          "fn": 2
+        },
+        "pharmacy-operational": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "regulator-impersonation": {
+          "n": 3,
+          "accuracy": 0.3333,
+          "precision": 1.0,
+          "recall": 0.3333,
+          "f1": 0.5,
+          "tp": 1,
+          "tn": 0,
+          "fp": 0,
+          "fn": 2
+        }
+      }
+    },
+    {
+      "model": "finetuned_local",
+      "split": "ood",
+      "n": 30,
+      "accuracy": 0.7333,
+      "precision": 0.6667,
+      "recall": 0.9333,
+      "f1": 0.7778,
+      "confusion_matrix": {
+        "tp": 14,
+        "tn": 8,
+        "fp": 7,
+        "fn": 1
+      },
+      "notes": "/Users/hakku/thesis/backend/models_cache/sms",
+      "per_category": {
+        "conversational": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "free-trial-offer": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "gp-legitimate": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 3,
+          "fn": 0
+        },
+        "illicit-marketplace": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1": 0.8,
+          "tp": 2,
+          "tn": 0,
+          "fp": 0,
+          "fn": 1
+        },
+        "logistics-legitimate": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 3,
+          "fn": 0
+        },
+        "nhs-impersonation": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "personal-mentions-meds": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "pharmacy-impersonation": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "pharmacy-operational": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 2,
+          "fp": 1,
+          "fn": 0
+        },
+        "regulator-impersonation": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        }
+      }
+    },
+    {
+      "model": "majority",
+      "split": "uci",
+      "n": 837,
+      "accuracy": 0.8674,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "confusion_matrix": {
+        "tp": 0,
+        "tn": 726,
+        "fp": 0,
+        "fn": 111
+      },
+      "notes": "always predicts legitimate",
+      "per_category": {}
+    },
+    {
+      "model": "keyword_rule",
+      "split": "uci",
+      "n": 837,
+      "accuracy": 0.8734,
+      "precision": 0.8571,
+      "recall": 0.0541,
+      "f1": 0.1017,
+      "confusion_matrix": {
+        "tp": 6,
+        "tn": 725,
+        "fp": 1,
+        "fn": 105
+      },
+      "notes": "25 hand-picked pharma-scam regexes",
+      "per_category": {}
+    },
+    {
+      "model": "pretrained_hub",
+      "split": "uci",
+      "n": 837,
+      "accuracy": 0.9833,
+      "precision": 0.9802,
+      "recall": 0.8919,
+      "f1": 0.934,
+      "confusion_matrix": {
+        "tp": 99,
+        "tn": 724,
+        "fp": 2,
+        "fn": 12
+      },
+      "notes": "mrm8488/bert-tiny-finetuned-sms-spam-detection",
+      "per_category": {}
+    },
+    {
+      "model": "finetuned_local",
+      "split": "uci",
+      "n": 837,
+      "accuracy": 0.9904,
+      "precision": 0.9905,
+      "recall": 0.9369,
+      "f1": 0.963,
+      "confusion_matrix": {
+        "tp": 104,
+        "tn": 725,
+        "fp": 1,
+        "fn": 7
+      },
+      "notes": "/Users/hakku/thesis/backend/models_cache/sms",
+      "per_category": {}
+    }
+  ]
+}

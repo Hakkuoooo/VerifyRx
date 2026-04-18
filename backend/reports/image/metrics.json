@@ -1,0 +1,102 @@
+{
+  "generated_at": "2026-04-18T22:30:52+00:00",
+  "model": {
+    "weights_path": "/Users/hakku/thesis/backend/models_cache/image/resnet18_finetuned.pt",
+    "is_finetuned": true
+  },
+  "split": {
+    "name": "val_split",
+    "seed": 42,
+    "val_frac": 0.2,
+    "class_order": [
+      "authentic",
+      "counterfeit"
+    ]
+  },
+  "metrics": {
+    "n": 135,
+    "accuracy": 0.9926,
+    "precision": 0.9804,
+    "recall": 1.0,
+    "f1": 0.9901,
+    "ece": 0.0181,
+    "confusion_matrix": {
+      "tp": 50,
+      "tn": 84,
+      "fp": 1,
+      "fn": 0
+    }
+  },
+  "reliability_bins": [
+    {
+      "lo": 0.5,
+      "hi": 0.55,
+      "count": 0,
+      "mean_conf": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lo": 0.55,
+      "hi": 0.6,
+      "count": 0,
+      "mean_conf": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lo": 0.6,
+      "hi": 0.65,
+      "count": 1,
+      "mean_conf": 0.6163,
+      "accuracy": 1.0
+    },
+    {
+      "lo": 0.65,
+      "hi": 0.7,
+      "count": 1,
+      "mean_conf": 0.6652,
+      "accuracy": 1.0
+    },
+    {
+      "lo": 0.7,
+      "hi": 0.75,
+      "count": 0,
+      "mean_conf": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lo": 0.75,
+      "hi": 0.8,
+      "count": 0,
+      "mean_conf": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lo": 0.8,
+      "hi": 0.85,
+      "count": 3,
+      "mean_conf": 0.828,
+      "accuracy": 1.0
+    },
+    {
+      "lo": 0.85,
+      "hi": 0.9,
+      "count": 0,
+      "mean_conf": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lo": 0.9,
+      "hi": 0.95,
+      "count": 5,
+      "mean_conf": 0.9255,
+      "accuracy": 0.8
+    },
+    {
+      "lo": 0.95,
+      "hi": 1.0,
+      "count": 125,
+      "mean_conf": 0.9953,
+      "accuracy": 1.0
+    }
+  ]
+}

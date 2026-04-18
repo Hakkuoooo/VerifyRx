@@ -1,0 +1,25 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+.DS_Store
+
+# ML model weights + generated visualisations
+models_cache/
+static/
+~/.cache/huggingface/
+
+# Training image dataset — student's own pack photos (proprietary / copyrighted,
+# never committed). Kept local; training is reproducible from scripts/.
+data/images/
+
+# External held-out image test set (used by scripts/evaluate_image_external.py).
+# Must never leak into training — keeping it local enforces that.
+data/images_external/
+
+# Stale scaffold from a pre-FastAPI Express experiment. Backend is Python.
+node_modules/
+package.json
+package-lock.json

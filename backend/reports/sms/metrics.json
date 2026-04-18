@@ -1,0 +1,153 @@
+{
+  "generated_at": "2026-04-18T22:30:07+00:00",
+  "model": {
+    "source": "/Users/hakku/thesis/backend/models_cache/sms",
+    "is_finetuned": true,
+    "spam_idx": 1
+  },
+  "splits": {
+    "uci_heldout": {
+      "name": "uci_heldout",
+      "n": 837,
+      "accuracy": 0.9904,
+      "precision": 0.9905,
+      "recall": 0.9369,
+      "f1": 0.963,
+      "ece": 0.0043,
+      "confusion_matrix": {
+        "tp": 104,
+        "tn": 725,
+        "fp": 1,
+        "fn": 7
+      },
+      "per_category": {}
+    },
+    "ood_pharma": {
+      "name": "ood_pharma",
+      "n": 30,
+      "accuracy": 0.7333,
+      "precision": 0.6667,
+      "recall": 0.9333,
+      "f1": 0.7778,
+      "ece": 0.2236,
+      "confusion_matrix": {
+        "tp": 14,
+        "tn": 8,
+        "fp": 7,
+        "fn": 1
+      },
+      "per_category": {
+        "conversational": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "free-trial-offer": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "gp-legitimate": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 3,
+          "fn": 0
+        },
+        "illicit-marketplace": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1": 0.8,
+          "tp": 2,
+          "tn": 0,
+          "fp": 0,
+          "fn": 1
+        },
+        "logistics-legitimate": {
+          "n": 3,
+          "accuracy": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 0,
+          "fp": 3,
+          "fn": 0
+        },
+        "nhs-impersonation": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "personal-mentions-meds": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "pharmacy-impersonation": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "pharmacy-operational": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "tn": 2,
+          "fp": 1,
+          "fn": 0
+        },
+        "regulator-impersonation": {
+          "n": 3,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        }
+      }
+    }
+  }
+}

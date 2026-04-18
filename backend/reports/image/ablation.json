@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-04-18T22:31:08+00:00",
+  "split": {
+    "seed": 42,
+    "val_frac": 0.2,
+    "class_order": [
+      "authentic",
+      "counterfeit"
+    ],
+    "n_train": 542,
+    "n_val": 135
+  },
+  "rows": [
+    {
+      "model": "random_head",
+      "n": 135,
+      "accuracy": 0.3704,
+      "precision": 0.3529,
+      "recall": 0.84,
+      "f1": 0.497,
+      "confusion_matrix": {
+        "tp": 42,
+        "tn": 8,
+        "fp": 77,
+        "fn": 8
+      },
+      "notes": "ImageNet backbone, random 2-class fc, no training"
+    },
+    {
+      "model": "imagenet_logreg",
+      "n": 135,
+      "accuracy": 0.9778,
+      "precision": 0.9608,
+      "recall": 0.98,
+      "f1": 0.9703,
+      "confusion_matrix": {
+        "tp": 49,
+        "tn": 83,
+        "fp": 2,
+        "fn": 1
+      },
+      "notes": "frozen ResNet-18 avgpool \u2192 sklearn LogisticRegression"
+    },
+    {
+      "model": "finetuned_local",
+      "n": 135,
+      "accuracy": 0.9926,
+      "precision": 0.9804,
+      "recall": 1.0,
+      "f1": 0.9901,
+      "confusion_matrix": {
+        "tp": 50,
+        "tn": 84,
+        "fp": 1,
+        "fn": 0
+      },
+      "notes": "/Users/hakku/thesis/backend/models_cache/image/resnet18_finetuned.pt"
+    }
+  ]
+}
