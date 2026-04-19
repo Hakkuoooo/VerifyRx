@@ -3,21 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  FlaskConical,
-  Gauge,
-  SplitSquareHorizontal,
-  Image as ImageIcon,
-  MessageSquare,
-  Info,
-  AlertTriangle,
-  CheckCircle2,
-} from "lucide-react";
-import type {
-  EvaluationResult,
-  EvaluationMetrics,
-  EvaluationFigures,
-} from "@/lib/types";
+import type { EvaluationResult, EvaluationFigures } from "@/lib/types";
 import { getEvaluation } from "@/lib/api";
 
 // ---------------------------------------------------------------------------
@@ -49,74 +35,70 @@ function fmtInt(n: number | undefined): string {
 }
 
 // ---------------------------------------------------------------------------
-// Small presentational components — kept in-file because they're only
-// ever used here and there's no value in a new /components module yet.
+// Presentational primitives — all flat, no shadows, no rounded-xl. Matches
+// the rest of the app's NHS/GOV.UK-adjacent design system.
 // ---------------------------------------------------------------------------
 function Section({
-  icon: Icon,
+  eyebrow,
   title,
   subtitle,
   children,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  eyebrow: string;
   title: string;
   subtitle?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-      <div className="flex items-start gap-3 mb-4">
-        <div className="w-9 h-9 rounded-lg bg-primary-light flex items-center justify-center shrink-0">
-          <Icon className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-          {subtitle && (
-            <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>
-          )}
-        </div>
-      </div>
-      {children}
+    <section className="bg-white border border-[var(--color-line)] p-5 md:p-6">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--color-primary)]">
+        {eyebrow}
+      </p>
+      <h2 className="mt-1 text-xl font-semibold text-[var(--color-ink)] tracking-tight">
+        {title}
+      </h2>
+      {subtitle && (
+        <p className="mt-1 text-[14px] text-[var(--color-ink-muted)] leading-relaxed max-w-3xl">
+          {subtitle}
+        </p>
+      )}
+      <div className="mt-5">{children}</div>
     </section>
   );
 }
 
 function EmptyCard({ message, command }: { message: string; command: string }) {
   return (
-    <div className="bg-gray-50 border border-dashed border-gray-200 rounded-lg p-4 text-sm text-gray-600">
-      <div className="flex items-center gap-2 mb-2">
-        <Info className="w-4 h-4 text-gray-400" />
-        <span>{message}</span>
-      </div>
-      <code className="block mt-1 px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono text-gray-800">
+    <div className="border-l-[3px] border-[var(--color-warning)] bg-[var(--color-warning-light)] p-4 text-sm text-[var(--color-ink)]">
+      <p className="font-semibold">{message}</p>
+      <code className="block mt-2 px-2 py-1 bg-white border border-[var(--color-line)] text-[12px] font-mono text-[var(--color-ink)]">
         {command}
       </code>
     </div>
   );
 }
 
-function MetricPill({
+function ProvenancePill({
   label,
   value,
-  tone = "neutral",
+  good = false,
+  mono = false,
 }: {
   label: string;
   value: string;
-  tone?: "neutral" | "good" | "warn";
+  good?: boolean;
+  mono?: boolean;
 }) {
-  const tones = {
-    neutral: "bg-gray-50 text-gray-700 border-gray-200",
-    good: "bg-green-50 text-green-700 border-green-200",
-    warn: "bg-amber-50 text-amber-700 border-amber-200",
-  };
   return (
     <div
-      className={`border rounded-lg px-3 py-2 text-xs ${tones[tone]}`}
+      className={`inline-flex items-center gap-2 px-2.5 py-1 border text-[12px] ${
+        good
+          ? "bg-[var(--color-success-light)] border-[#9ed2b8] text-[var(--color-success)]"
+          : "bg-[var(--color-canvas)] border-[var(--color-line)] text-[var(--color-ink)]"
+      }`}
     >
-      <div className="uppercase tracking-wide font-medium opacity-70">
-        {label}
-      </div>
-      <div className="text-base font-semibold tabular-nums">{value}</div>
+      <span className="uppercase tracking-[0.08em] opacity-80">{label}</span>
+      <span className={mono ? "font-mono" : "font-semibold"}>{value}</span>
     </div>
   );
 }
@@ -155,39 +137,41 @@ function SplitTable({ rows }: { rows: SplitRow[] }) {
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
         <thead>
-          <tr className="text-xs uppercase text-gray-500 border-b border-gray-100">
-            <th className="text-left py-2 pr-4 font-medium">Split</th>
-            <th className="text-right py-2 px-2 font-medium">n</th>
-            <th className="text-right py-2 px-2 font-medium">Accuracy</th>
-            <th className="text-right py-2 px-2 font-medium">Precision</th>
-            <th className="text-right py-2 px-2 font-medium">Recall</th>
-            <th className="text-right py-2 px-2 font-medium">F1</th>
-            <th className="text-right py-2 px-2 font-medium">ECE</th>
+          <tr className="text-[11px] uppercase tracking-wider text-[var(--color-ink-faint)] border-b border-[var(--color-line-strong)]">
+            <th className="text-left py-2.5 pr-4 font-semibold">Split</th>
+            <th className="text-right py-2.5 px-2 font-semibold">n</th>
+            <th className="text-right py-2.5 px-2 font-semibold">Accuracy</th>
+            <th className="text-right py-2.5 px-2 font-semibold">Precision</th>
+            <th className="text-right py-2.5 px-2 font-semibold">Recall</th>
+            <th className="text-right py-2.5 px-2 font-semibold">F1</th>
+            <th className="text-right py-2.5 px-2 font-semibold">ECE</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr
               key={r.name}
-              className="border-b border-gray-50 last:border-b-0"
+              className="border-b border-[var(--color-line)] last:border-b-0"
             >
-              <td className="py-2 pr-4 font-medium text-gray-900">{r.name}</td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 pr-4 font-semibold text-[var(--color-ink)]">
+                {r.name}
+              </td>
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink-muted)]">
                 {fmtInt(r.n)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(r.accuracy)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(r.precision)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(r.recall)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(r.f1)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(r.ece)}
               </td>
             </tr>
@@ -212,45 +196,50 @@ function AblationTable({ rows }: { rows: unknown[] }) {
       notes: asString(r.notes),
     };
   });
+  const hasSplit = normalised.some((r) => r.split);
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
         <thead>
-          <tr className="text-xs uppercase text-gray-500 border-b border-gray-100">
-            <th className="text-left py-2 pr-4 font-medium">Model</th>
-            {normalised.some((r) => r.split) && (
-              <th className="text-left py-2 px-2 font-medium">Split</th>
+          <tr className="text-[11px] uppercase tracking-wider text-[var(--color-ink-faint)] border-b border-[var(--color-line-strong)]">
+            <th className="text-left py-2.5 pr-4 font-semibold">Model</th>
+            {hasSplit && (
+              <th className="text-left py-2.5 px-2 font-semibold">Split</th>
             )}
-            <th className="text-right py-2 px-2 font-medium">n</th>
-            <th className="text-right py-2 px-2 font-medium">Accuracy</th>
-            <th className="text-right py-2 px-2 font-medium">Precision</th>
-            <th className="text-right py-2 px-2 font-medium">Recall</th>
-            <th className="text-right py-2 px-2 font-medium">F1</th>
+            <th className="text-right py-2.5 px-2 font-semibold">n</th>
+            <th className="text-right py-2.5 px-2 font-semibold">Accuracy</th>
+            <th className="text-right py-2.5 px-2 font-semibold">Precision</th>
+            <th className="text-right py-2.5 px-2 font-semibold">Recall</th>
+            <th className="text-right py-2.5 px-2 font-semibold">F1</th>
           </tr>
         </thead>
         <tbody>
           {normalised.map((r, i) => (
             <tr
               key={`${r.model}-${r.split ?? i}`}
-              className="border-b border-gray-50 last:border-b-0"
+              className="border-b border-[var(--color-line)] last:border-b-0"
             >
-              <td className="py-2 pr-4 font-medium text-gray-900">{r.model}</td>
-              {normalised.some((r2) => r2.split) && (
-                <td className="py-2 px-2 text-gray-600">{r.split ?? "—"}</td>
+              <td className="py-2.5 pr-4 font-semibold text-[var(--color-ink)]">
+                {r.model}
+              </td>
+              {hasSplit && (
+                <td className="py-2.5 px-2 text-[var(--color-ink-muted)]">
+                  {r.split ?? "—"}
+                </td>
               )}
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink-muted)]">
                 {fmtInt(r.n)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(r.accuracy)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(r.precision)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(r.recall)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(r.f1)}
               </td>
             </tr>
@@ -277,37 +266,37 @@ function PerCategoryTable({ per }: { per: Record<string, unknown> }) {
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
         <thead>
-          <tr className="text-xs uppercase text-gray-500 border-b border-gray-100">
-            <th className="text-left py-2 pr-4 font-medium">Category</th>
-            <th className="text-right py-2 px-2 font-medium">n</th>
-            <th className="text-right py-2 px-2 font-medium">Accuracy</th>
-            <th className="text-right py-2 px-2 font-medium">F1</th>
+          <tr className="text-[11px] uppercase tracking-wider text-[var(--color-ink-faint)] border-b border-[var(--color-line-strong)]">
+            <th className="text-left py-2.5 pr-4 font-semibold">Category</th>
+            <th className="text-right py-2.5 px-2 font-semibold">n</th>
+            <th className="text-right py-2.5 px-2 font-semibold">Accuracy</th>
+            <th className="text-right py-2.5 px-2 font-semibold">F1</th>
           </tr>
         </thead>
         <tbody>
           {entries.map((e) => (
             <tr
               key={e.cat}
-              className="border-b border-gray-50 last:border-b-0"
+              className="border-b border-[var(--color-line)] last:border-b-0"
             >
-              <td className="py-2 pr-4 font-mono text-gray-800 text-xs">
+              <td className="py-2.5 pr-4 font-mono text-[var(--color-ink)] text-[13px]">
                 {e.cat}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink-muted)]">
                 {fmtInt(e.n)}
               </td>
               <td
-                className={`py-2 px-2 text-right tabular-nums ${
+                className={`py-2.5 px-2 text-right tabular-nums font-semibold ${
                   (e.accuracy ?? 1) < 0.5
-                    ? "text-red-600 font-medium"
+                    ? "text-[var(--color-danger)]"
                     : (e.accuracy ?? 1) < 1
-                      ? "text-amber-600"
-                      : "text-green-700"
+                      ? "text-[var(--color-warning)]"
+                      : "text-[var(--color-success)]"
                 }`}
               >
                 {fmt(e.accuracy)}
               </td>
-              <td className="py-2 px-2 text-right tabular-nums text-gray-700">
+              <td className="py-2.5 px-2 text-right tabular-nums text-[var(--color-ink)]">
                 {fmt(e.f1)}
               </td>
             </tr>
@@ -332,11 +321,11 @@ function FigureGrid({
     );
   if (available.length === 0) return null;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
       {available.map((f) => (
         <figure
           key={f.key}
-          className="border border-gray-100 rounded-lg p-3 bg-gray-50"
+          className="border border-[var(--color-line)] bg-[var(--color-canvas)] p-3"
         >
           <Image
             src={f.url}
@@ -344,9 +333,9 @@ function FigureGrid({
             width={640}
             height={480}
             unoptimized
-            className="w-full h-auto rounded"
+            className="w-full h-auto bg-white"
           />
-          <figcaption className="text-xs text-gray-500 mt-2 text-center">
+          <figcaption className="text-[12px] text-[var(--color-ink-muted)] mt-2 text-center">
             {f.label}
           </figcaption>
         </figure>
@@ -384,34 +373,35 @@ export default function ResultsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        <div className="h-6 w-32 bg-gray-100 rounded animate-pulse mb-4" />
-        <div className="h-40 bg-white rounded-xl border border-gray-100 shadow-sm animate-pulse" />
+      <div className="max-w-5xl mx-auto px-4 py-10 md:py-14">
+        <div className="h-4 w-32 bg-[var(--color-line)] animate-pulse mb-4" />
+        <div className="h-8 w-72 bg-[var(--color-line)] animate-pulse mb-6" />
+        <div className="h-40 bg-white border border-[var(--color-line)] animate-pulse" />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-10">
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 text-center">
-          <AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-3" />
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">
-            Couldn&apos;t load evaluation report
-          </h1>
-          <p className="text-sm text-gray-500 mb-4">
-            The backend didn&apos;t return an evaluation payload. Usually this
-            means the evaluation scripts haven&apos;t been run yet.
-          </p>
-          {error && (
-            <pre className="text-xs text-left text-gray-500 bg-gray-50 border border-gray-100 rounded p-3 overflow-auto">
-              {error}
-            </pre>
-          )}
-          <code className="block mt-4 px-3 py-2 bg-gray-50 border border-gray-200 rounded text-xs font-mono text-gray-800 text-left">
-            cd backend && python -m scripts.generate_evaluation_report
-          </code>
-        </div>
+      <div className="max-w-3xl mx-auto px-4 py-10 md:py-14">
+        <p className="text-[12px] font-semibold tracking-[0.1em] uppercase text-[var(--color-warning)]">
+          Methodology
+        </p>
+        <h1 className="display mt-2 text-[32px] font-semibold text-[var(--color-ink)]">
+          Evaluation report not available.
+        </h1>
+        <p className="mt-3 text-[15px] text-[var(--color-ink-muted)] leading-relaxed">
+          The backend didn&apos;t return an evaluation payload. Usually this
+          means the evaluation scripts haven&apos;t been run yet.
+        </p>
+        {error && (
+          <pre className="mt-4 text-xs text-[var(--color-ink-muted)] bg-white border border-[var(--color-line)] p-3 overflow-auto">
+            {error}
+          </pre>
+        )}
+        <code className="block mt-4 px-3 py-2 bg-white border border-[var(--color-line)] text-[13px] font-mono text-[var(--color-ink)]">
+          cd backend && python -m scripts.generate_evaluation_report
+        </code>
       </div>
     );
   }
@@ -456,178 +446,170 @@ export default function ResultsPage() {
     (asRecord(data.image.ablation)?.rows as unknown[] | undefined) ?? [];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10 space-y-6">
-      {/* Header */}
-      <div>
-        <div className="inline-flex items-center gap-2 mb-2">
-          <div className="w-10 h-10 rounded-lg bg-primary-light flex items-center justify-center">
-            <FlaskConical className="w-5 h-5 text-primary" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Evaluation Results
-          </h1>
-        </div>
-        <p className="text-gray-500">
-          Live metrics, ablation studies, calibration diagrams, and the
-          external held-out test — straight from{" "}
-          <code className="text-xs bg-gray-100 rounded px-1 py-0.5">
-            backend/reports/
-          </code>
-          .
-        </p>
-        <p className="text-xs text-gray-400 mt-1">
-          Generated{" "}
-          {new Date(data.generatedAt).toLocaleString(undefined, {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
-          . Regenerate:{" "}
-          <code className="text-xs bg-gray-100 rounded px-1 py-0.5 font-mono">
-            python -m scripts.generate_evaluation_report
-          </code>
-        </p>
-      </div>
+    <div className="max-w-5xl mx-auto px-4 py-10 md:py-14">
+      {/* ─── Page header ─── */}
+      <p className="text-[12px] font-semibold tracking-[0.1em] uppercase text-[var(--color-primary)]">
+        Methodology
+      </p>
+      <h1 className="display mt-2 text-[32px] md:text-[40px] font-semibold text-[var(--color-ink)]">
+        How we evaluate our models.
+      </h1>
+      <p className="mt-3 text-[17px] text-[var(--color-ink-muted)] leading-relaxed max-w-3xl">
+        Live metrics, calibration diagrams, ablation studies and the
+        external held-out test — straight from{" "}
+        <code className="font-mono text-[15px] bg-[var(--color-canvas)] border border-[var(--color-line)] px-1">
+          backend/reports/
+        </code>
+        . Nothing here is fabricated; every figure is regenerated from
+        disk on the last training run.
+      </p>
+      <p className="mt-3 text-[13px] text-[var(--color-ink-faint)]">
+        Generated{" "}
+        {new Date(data.generatedAt).toLocaleString(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}
+        . Regenerate:{" "}
+        <code className="font-mono bg-[var(--color-canvas)] border border-[var(--color-line)] px-1">
+          python -m scripts.generate_evaluation_report
+        </code>
+      </p>
 
-      {/* ============================================================= */}
-      {/* SMS section                                                    */}
-      {/* ============================================================= */}
-      <Section
-        icon={MessageSquare}
-        title="SMS classifier — metrics"
-        subtitle={
-          smsIsFinetuned
-            ? "Fine-tuned DistilBERT · in-distribution + out-of-distribution"
-            : "Pretrained fallback (no local fine-tune detected)"
-        }
-      >
-        {smsRows.length > 0 ? (
-          <>
-            <SplitTable rows={smsRows} />
-            <div className="flex flex-wrap gap-2 mt-4">
-              <ProvenancePill
-                label="Fine-tuned"
-                value={smsIsFinetuned ? "yes" : "no"}
-                good={smsIsFinetuned}
-              />
-              <ProvenancePill
-                label="Source"
-                value={asString(smsModel?.source) ?? "—"}
-                mono
-              />
-            </div>
-            <FigureGrid
-              figures={data.sms.figures}
-              pick={[
-                { key: "confusionUci", label: "Confusion — UCI" },
-                { key: "confusionOod", label: "Confusion — OOD pharma" },
-                { key: "reliabilityUci", label: "Reliability — UCI" },
-                { key: "reliabilityOod", label: "Reliability — OOD pharma" },
-              ]}
-            />
-          </>
-        ) : (
-          <EmptyCard
-            message="No SMS metrics on disk."
-            command="python -m scripts.evaluate_sms"
-          />
-        )}
-      </Section>
-
-      {smsOodPer && Object.keys(smsOodPer).length > 0 && (
+      <div className="mt-10 space-y-6">
+        {/* SMS section */}
         <Section
-          icon={Gauge}
-          title="SMS — OOD per-category breakdown"
-          subtitle="Ten pharma sub-scenarios, three samples each. Red cells flag categories the model struggles with — exactly the honest weak spots the thesis should cite."
+          eyebrow="Text classifier"
+          title="SMS — DistilBERT fine-tune"
+          subtitle={
+            smsIsFinetuned
+              ? "In-distribution (UCI spam) and out-of-distribution (UK pharma) evaluation on the fine-tuned DistilBERT model."
+              : "Pretrained fallback — no local fine-tune detected."
+          }
         >
-          <PerCategoryTable per={smsOodPer} />
-        </Section>
-      )}
-
-      <Section
-        icon={SplitSquareHorizontal}
-        title="SMS ablation"
-        subtitle="Four models, identical inputs. Answers: does fine-tuning actually buy anything over the baselines?"
-      >
-        {smsAblationRows.length > 0 ? (
-          <>
-            <AblationTable rows={smsAblationRows} />
-            <FigureGrid
-              figures={data.sms.figures}
-              pick={[
-                { key: "ablationOod", label: "Ablation — OOD pharma" },
-                { key: "ablationUci", label: "Ablation — UCI" },
-              ]}
-            />
-          </>
-        ) : (
-          <EmptyCard
-            message="No SMS ablation on disk."
-            command="python -m scripts.ablation_sms"
-          />
-        )}
-      </Section>
-
-      {/* ============================================================= */}
-      {/* Image section                                                  */}
-      {/* ============================================================= */}
-      <Section
-        icon={ImageIcon}
-        title="Image classifier — metrics"
-        subtitle={
-          imageIsFinetuned
-            ? "Fine-tuned ResNet-18 · val split + external held-out"
-            : "Demo mode (no fine-tuned weights on disk)"
-        }
-      >
-        {imageRows.length > 0 ? (
-          <>
-            <SplitTable rows={imageRows} />
-            <div className="flex flex-wrap gap-2 mt-4">
-              <ProvenancePill
-                label="Fine-tuned"
-                value={imageIsFinetuned ? "yes" : "no"}
-                good={imageIsFinetuned}
-              />
-              <ProvenancePill
-                label="Weights"
-                value={asString(imageModel?.weights_path) ?? "—"}
-                mono
-              />
-              {data.image.external && (
+          {smsRows.length > 0 ? (
+            <>
+              <SplitTable rows={smsRows} />
+              <div className="flex flex-wrap gap-2 mt-5">
                 <ProvenancePill
-                  label="External test set"
-                  value="loaded"
-                  good
+                  label="Fine-tuned"
+                  value={smsIsFinetuned ? "yes" : "no"}
+                  good={smsIsFinetuned}
                 />
-              )}
-            </div>
-            <FigureGrid
-              figures={data.image.figures}
-              pick={[
-                { key: "confusionVal", label: "Confusion — val" },
-                { key: "reliabilityVal", label: "Reliability — val" },
-                { key: "confusionExternal", label: "Confusion — external" },
-                {
-                  key: "reliabilityExternal",
-                  label: "Reliability — external",
-                },
-              ]}
+                <ProvenancePill
+                  label="Source"
+                  value={asString(smsModel?.source) ?? "—"}
+                  mono
+                />
+              </div>
+              <FigureGrid
+                figures={data.sms.figures}
+                pick={[
+                  { key: "confusionUci", label: "Confusion — UCI held-out" },
+                  { key: "confusionOod", label: "Confusion — OOD pharma" },
+                  { key: "reliabilityUci", label: "Reliability — UCI held-out" },
+                  { key: "reliabilityOod", label: "Reliability — OOD pharma" },
+                ]}
+              />
+            </>
+          ) : (
+            <EmptyCard
+              message="No SMS metrics on disk."
+              command="python -m scripts.evaluate_sms"
             />
-          </>
-        ) : (
-          <EmptyCard
-            message="No image metrics on disk."
-            command="python -m scripts.evaluate_image"
-          />
+          )}
+        </Section>
+
+        {smsOodPer && Object.keys(smsOodPer).length > 0 && (
+          <Section
+            eyebrow="Failure analysis"
+            title="SMS — OOD per-category breakdown"
+            subtitle="Ten UK pharma sub-scenarios, three samples each. Red cells show the categories the model struggles on — the honest weak spots."
+          >
+            <PerCategoryTable per={smsOodPer} />
+          </Section>
         )}
-        {!data.image.external && imageRows.length > 0 && (
-          <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800">
-            <div className="flex items-start gap-2">
-              <Info className="w-4 h-4 shrink-0 mt-0.5" />
-              <div>
-                <div className="font-medium mb-0.5">
-                  External held-out set not yet populated.
-                </div>
+
+        <Section
+          eyebrow="Ablation"
+          title="SMS — does fine-tuning help?"
+          subtitle="Four models, identical inputs. Answers whether the DistilBERT fine-tune actually beats the baselines on both splits."
+        >
+          {smsAblationRows.length > 0 ? (
+            <>
+              <AblationTable rows={smsAblationRows} />
+              <FigureGrid
+                figures={data.sms.figures}
+                pick={[
+                  { key: "ablationOod", label: "Ablation — OOD pharma" },
+                  { key: "ablationUci", label: "Ablation — UCI held-out" },
+                ]}
+              />
+            </>
+          ) : (
+            <EmptyCard
+              message="No SMS ablation on disk."
+              command="python -m scripts.ablation_sms"
+            />
+          )}
+        </Section>
+
+        {/* Image section */}
+        <Section
+          eyebrow="Vision classifier"
+          title="Image — ResNet-18 fine-tune"
+          subtitle={
+            imageIsFinetuned
+              ? "Validation split plus an external held-out set kept strictly separate from training."
+              : "Demo mode — no fine-tuned weights on disk."
+          }
+        >
+          {imageRows.length > 0 ? (
+            <>
+              <SplitTable rows={imageRows} />
+              <div className="flex flex-wrap gap-2 mt-5">
+                <ProvenancePill
+                  label="Fine-tuned"
+                  value={imageIsFinetuned ? "yes" : "no"}
+                  good={imageIsFinetuned}
+                />
+                <ProvenancePill
+                  label="Weights"
+                  value={asString(imageModel?.weights_path) ?? "—"}
+                  mono
+                />
+                {data.image.external && (
+                  <ProvenancePill
+                    label="External test set"
+                    value="loaded"
+                    good
+                  />
+                )}
+              </div>
+              <FigureGrid
+                figures={data.image.figures}
+                pick={[
+                  { key: "confusionVal", label: "Confusion — val" },
+                  { key: "reliabilityVal", label: "Reliability — val" },
+                  { key: "confusionExternal", label: "Confusion — external" },
+                  {
+                    key: "reliabilityExternal",
+                    label: "Reliability — external",
+                  },
+                ]}
+              />
+            </>
+          ) : (
+            <EmptyCard
+              message="No image metrics on disk."
+              command="python -m scripts.evaluate_image"
+            />
+          )}
+          {!data.image.external && imageRows.length > 0 && (
+            <div className="mt-5 border-l-[3px] border-[var(--color-warning)] bg-[var(--color-warning-light)] p-4 text-[13px] text-[var(--color-ink)]">
+              <p className="font-semibold">
+                External held-out set not yet populated.
+              </p>
+              <p className="mt-1 leading-relaxed">
                 Drop images into{" "}
                 <code className="font-mono">
                   backend/data/images_external/&#123;authentic,counterfeit&#125;/
@@ -637,77 +619,44 @@ export default function ResultsPage() {
                   python -m scripts.evaluate_image_external
                 </code>
                 . Until then only in-distribution val numbers are available.
-              </div>
+              </p>
             </div>
-          </div>
-        )}
-      </Section>
+          )}
+        </Section>
 
-      <Section
-        icon={SplitSquareHorizontal}
-        title="Image ablation"
-        subtitle="Random head vs ImageNet features + logistic regression vs full fine-tune. Same val split throughout."
-      >
-        {imageAblationRows.length > 0 ? (
-          <>
-            <AblationTable rows={imageAblationRows} />
-            <FigureGrid
-              figures={data.image.figures}
-              pick={[{ key: "ablationVal", label: "Ablation — val" }]}
+        <Section
+          eyebrow="Ablation"
+          title="Image — how much does fine-tuning buy us?"
+          subtitle="Random head vs ImageNet features + logistic regression vs full fine-tune. Same val split throughout."
+        >
+          {imageAblationRows.length > 0 ? (
+            <>
+              <AblationTable rows={imageAblationRows} />
+              <FigureGrid
+                figures={data.image.figures}
+                pick={[{ key: "ablationVal", label: "Ablation — val" }]}
+              />
+            </>
+          ) : (
+            <EmptyCard
+              message="No image ablation on disk."
+              command="python -m scripts.ablation_image"
             />
-          </>
-        ) : (
-          <EmptyCard
-            message="No image ablation on disk."
-            command="python -m scripts.ablation_image"
-          />
-        )}
-      </Section>
-
-      <div className="text-center text-xs text-gray-400 pt-2">
-        Want the full write-up? See{" "}
-        <Link href="/dashboard" className="text-primary hover:underline">
-          the live dashboard
-        </Link>{" "}
-        for a single-session run, or open{" "}
-        <code className="font-mono">backend/reports/SUMMARY.md</code> for the
-        complete report.
+          )}
+        </Section>
       </div>
+
+      <p className="mt-10 text-[13px] text-[var(--color-ink-faint)]">
+        For a single-session run of all three checkers, open{" "}
+        <Link href="/dashboard" className="prose-link">
+          My checks
+        </Link>
+        . The complete machine-readable report lives in{" "}
+        <code className="font-mono bg-[var(--color-canvas)] border border-[var(--color-line)] px-1">
+          backend/reports/SUMMARY.md
+        </code>
+        .
+      </p>
     </div>
   );
 }
-
-// Helper used by two sections — defined at end of file so section JSX reads
-// top-down. Rendered pill that shows a provenance key/value with an
-// optional "good" tint for confirming things like `fine-tuned: yes`.
-function ProvenancePill({
-  label,
-  value,
-  good = false,
-  mono = false,
-}: {
-  label: string;
-  value: string;
-  good?: boolean;
-  mono?: boolean;
-}) {
-  return (
-    <div
-      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs ${
-        good
-          ? "bg-green-50 border-green-200 text-green-800"
-          : "bg-gray-50 border-gray-200 text-gray-700"
-      }`}
-    >
-      {good && <CheckCircle2 className="w-3.5 h-3.5" />}
-      <span className="uppercase tracking-wide opacity-70">{label}</span>
-      <span className={mono ? "font-mono" : "font-medium"}>{value}</span>
-    </div>
-  );
-}
-
-// Silence unused-symbol warnings from the optional MetricPill export that
-// may be reintroduced later. Keeping it available without the linter
-// complaining about the current file.
-export type { EvaluationMetrics };
-void MetricPill;

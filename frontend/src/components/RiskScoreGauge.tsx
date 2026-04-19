@@ -7,10 +7,14 @@ interface RiskScoreGaugeProps {
   size?: "sm" | "md" | "lg";
 }
 
+// Kept a ring gauge because it's the one visual that makes the risk
+// score legible at a glance (precedent: Scamadviser, Truecaller,
+// FCA ScamSmart). Palette was tightened in constants.ts so it no
+// longer reads as a Tailwind demo.
 const sizes = {
-  sm: { dim: 80, stroke: 6, fontSize: 18, labelSize: 8 },
+  sm: { dim: 80, stroke: 6, fontSize: 18, labelSize: 9 },
   md: { dim: 120, stroke: 8, fontSize: 28, labelSize: 11 },
-  lg: { dim: 180, stroke: 10, fontSize: 42, labelSize: 14 },
+  lg: { dim: 160, stroke: 10, fontSize: 40, labelSize: 12 },
 };
 
 export default function RiskScoreGauge({
@@ -28,18 +32,23 @@ export default function RiskScoreGauge({
   const offset = circumference * (1 - progress);
 
   return (
-    <div className="flex flex-col items-center gap-1">
-      <svg width={dim} height={dim} className="-rotate-90">
-        {/* Background track */}
+    <div className="flex flex-col items-center gap-2">
+      <svg
+        width={dim}
+        height={dim}
+        className="-rotate-90"
+        role="img"
+        aria-label={`Risk score ${clampedScore} out of 100, ${label}`}
+      >
+        {/* Background track — very faint, doesn't compete with the arc */}
         <circle
           cx={dim / 2}
           cy={dim / 2}
           r={radius}
           fill="none"
-          stroke="#E5E7EB"
+          stroke="#eceef2"
           strokeWidth={stroke}
         />
-        {/* Colored arc */}
         <circle
           cx={dim / 2}
           cy={dim / 2}
@@ -52,27 +61,30 @@ export default function RiskScoreGauge({
           strokeLinecap="round"
           className="transition-all duration-700 ease-out"
         />
-        {/* Score text */}
         <text
           x={dim / 2}
           y={dim / 2}
           textAnchor="middle"
           dominantBaseline="central"
-          fill={color.text}
+          fill="var(--color-ink)"
           fontSize={fontSize}
-          fontWeight="700"
+          fontWeight="600"
           className="rotate-90"
-          style={{ transformOrigin: "center" }}
+          style={{
+            transformOrigin: "center",
+            letterSpacing: "-0.02em",
+          }}
         >
           {clampedScore}
         </text>
       </svg>
       <span
-        className="font-semibold rounded-full px-2.5 py-0.5"
+        className="font-semibold uppercase tracking-[0.08em] px-2 py-0.5"
         style={{
           fontSize: labelSize,
           color: color.text,
           backgroundColor: color.bg,
+          border: `1px solid ${color.border}`,
         }}
       >
         {label}

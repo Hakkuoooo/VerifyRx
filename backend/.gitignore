@@ -3,7 +3,7 @@ __pycache__/
 *.pyo
 .venv/
 venv/
-.env
+.env*
 .DS_Store
 
 # ML model weights + generated visualisations

@@ -20,9 +20,7 @@ important to the prediction.
 
 from __future__ import annotations
 
-import io
 import uuid
-from typing import Callable
 
 import numpy as np
 import torch

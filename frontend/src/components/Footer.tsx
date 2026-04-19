@@ -91,16 +91,6 @@ export default function Footer() {
                 My checks
               </Link>
             </li>
-            <li>
-              <a href="#" className="prose-link">
-                Privacy
-              </a>
-            </li>
-            <li>
-              <a href="#" className="prose-link">
-                Accessibility
-              </a>
-            </li>
           </ul>
         </div>
       </div>

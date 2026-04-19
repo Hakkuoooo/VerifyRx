@@ -40,11 +40,6 @@ router = APIRouter(tags=["evaluation"])
 # metrics/ablation bodies — the eval scripts own that schema and we don't
 # want two places to change whenever the report grows a new field.
 # ---------------------------------------------------------------------------
-class EvaluationFigures(BaseModel):
-    """Relative URLs under /reports for the PNG plots."""
-    model_config = ConfigDict(populate_by_name=True)
-
-
 class SmsEvaluation(BaseModel):
     metrics: dict[str, Any] | None = None
     ablation: dict[str, Any] | None = None

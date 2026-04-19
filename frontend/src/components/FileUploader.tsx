@@ -59,20 +59,23 @@ export default function FileUploader({
   return (
     <div>
       {preview ? (
-        <div className="relative rounded-xl border border-gray-200 bg-white p-4">
+        <div className="relative bg-white border border-[var(--color-line)] p-4">
           <button
             onClick={clear}
-            className="absolute top-2 right-2 p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            className="absolute top-2 right-2 p-1 hover:bg-[var(--color-line)] transition-colors"
             aria-label="Remove file"
           >
-            <X className="w-4 h-4 text-gray-500" />
+            <X className="w-4 h-4 text-[var(--color-ink-muted)]" />
           </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt="Upload preview"
-            className="max-h-64 mx-auto rounded-lg object-contain"
+            className="max-h-64 mx-auto object-contain"
           />
-          <p className="text-sm text-gray-500 text-center mt-2">{fileName}</p>
+          <p className="text-sm text-[var(--color-ink-muted)] text-center mt-3 font-mono text-[13px]">
+            {fileName}
+          </p>
         </div>
       ) : (
         <div
@@ -83,22 +86,37 @@ export default function FileUploader({
           }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
-          className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              inputRef.current?.click();
+            }
+          }}
+          className={`border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${
             dragOver
-              ? "border-primary bg-primary-light"
-              : "border-gray-300 hover:border-gray-400 bg-white"
+              ? "border-[var(--color-primary)] bg-[var(--color-primary-light)]"
+              : "border-[var(--color-line-strong)] hover:border-[var(--color-primary)] bg-white"
           }`}
         >
-          <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-          <p className="text-sm font-medium text-gray-700">
-            Drag and drop or click to upload
+          <Upload
+            className="w-8 h-8 text-[var(--color-ink-faint)] mx-auto mb-3"
+            aria-hidden
+          />
+          <p className="text-sm font-semibold text-[var(--color-ink)]">
+            Drop a photo here, or click to choose a file
           </p>
-          <p className="text-xs text-gray-400 mt-1">
-            Max {maxSizeMB}MB &middot; Images only
+          <p className="text-xs text-[var(--color-ink-faint)] mt-1">
+            JPG, PNG or WebP &middot; up to {maxSizeMB} MB
           </p>
         </div>
       )}
-      {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
+      {error && (
+        <p className="text-sm text-[var(--color-danger)] mt-3 font-medium">
+          {error}
+        </p>
+      )}
       <input
         ref={inputRef}
         type="file"

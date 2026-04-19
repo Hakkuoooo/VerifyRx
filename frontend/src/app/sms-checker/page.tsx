@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MessageSquare, CheckCircle, XCircle } from "lucide-react";
 import { checkSms } from "@/lib/api";
 import type { SmsCheckResult } from "@/lib/types";
 import RiskScoreGauge from "@/components/RiskScoreGauge";
 import ExplainabilityPanel from "@/components/ExplainabilityPanel";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { getRiskLevel } from "@/lib/utils";
 
 export default function SmsCheckerPage() {
   const [text, setText] = useState("");
@@ -44,87 +44,204 @@ export default function SmsCheckerPage() {
       console.error("checkSms failed", err);
       setError(
         err instanceof Error && err.message
-          ? `Failed to analyse SMS: ${err.message}`
-          : "Failed to analyse SMS. Please try again."
+          ? `We could not analyse that message. ${err.message}`
+          : "We could not analyse that message. Please try again in a moment."
       );
     } finally {
       if (!controller.signal.aborted) setLoading(false);
     }
   }
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-light mb-4">
-          <MessageSquare className="w-6 h-6 text-primary" />
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900">SMS Scam Detector</h1>
-        <p className="text-gray-500 mt-2">
-          Paste a suspicious text message to detect medicine-related scams using
-          NLP analysis.
-        </p>
-      </div>
+  const isScam = result?.prediction === "scam";
+  const level = result ? getRiskLevel(result.riskScore) : null;
+  const accent =
+    level === "high"
+      ? "danger"
+      : level === "medium"
+        ? "warning"
+        : "success";
 
-      <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-3">
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-10 md:py-14">
+      {/* ─── Page header ─── */}
+      <p className="text-[12px] font-semibold tracking-[0.1em] uppercase text-[var(--color-primary)]">
+        Check a text message
+      </p>
+      <h1 className="display mt-2 text-[32px] md:text-[40px] font-semibold text-[var(--color-ink)]">
+        Is this text a medicine scam?
+      </h1>
+      <p className="mt-3 text-[17px] text-[var(--color-ink-muted)] leading-relaxed max-w-2xl">
+        Paste a text message you&rsquo;ve received — from an &ldquo;NHS
+        appointment&rdquo;, &ldquo;online pharmacy&rdquo;, or anyone else.
+        We compare it against patterns we&rsquo;ve seen in real pharmacy
+        scam messages reported to UK authorities.
+      </p>
+
+      {/* ─── Form ─── */}
+      <form onSubmit={handleSubmit} className="mt-8 max-w-2xl">
+        <label
+          htmlFor="sms-input"
+          className="block text-sm font-semibold text-[var(--color-ink)] mb-1"
+        >
+          Text of the message
+        </label>
+        <p
+          id="sms-hint"
+          className="text-[13px] text-[var(--color-ink-muted)] mb-2"
+        >
+          Paste the full message. Don&rsquo;t include your phone number or
+          any personal details.
+        </p>
         <textarea
+          id="sms-input"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Paste the SMS text here..."
-          rows={4}
-          className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-white text-gray-900 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+          aria-describedby="sms-hint"
+          placeholder="Paste the message here…"
+          rows={5}
+          maxLength={2000}
+          className="w-full px-3 py-3 border-2 border-[var(--color-ink)] bg-white text-[var(--color-ink)] text-[15px] resize-y focus:outline-none focus:border-[var(--color-primary)]"
+          disabled={loading}
         />
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={loading || !text.trim()}
-            className="px-6 py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Analyse
-          </button>
+        <div className="mt-1 flex justify-between text-[12px] text-[var(--color-ink-faint)]">
+          <span>Up to 2,000 characters.</span>
+          <span className="font-mono">{text.length} / 2000</span>
         </div>
+        <button
+          type="submit"
+          disabled={loading || !text.trim()}
+          className="mt-4 h-12 px-5 bg-[var(--color-action)] hover:bg-[var(--color-action-hover)] disabled:bg-[var(--color-ink-faint)] disabled:cursor-not-allowed text-white text-[15px] font-semibold rounded-[2px] transition-colors"
+        >
+          {loading ? "Analysing…" : "Check this message"}
+        </button>
       </form>
 
-      {loading && <LoadingSpinner text="Analysing SMS..." />}
-
-      {error && (
-        <p className="text-center text-red-600 text-sm mt-6">{error}</p>
+      {loading && (
+        <LoadingSpinner text="Running the scam-detection model and building the explanation…" />
       )}
 
-      {result && (
-        <div className="mt-10 space-y-8">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <RiskScoreGauge score={result.riskScore} size="lg" />
-            <div className="flex flex-col items-center sm:items-start gap-2">
-              <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold ${
-                  result.prediction === "scam"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-green-100 text-green-700"
-                }`}
+      {error && (
+        <div
+          role="alert"
+          className="mt-6 border-l-[4px] border-[var(--color-danger)] bg-[var(--color-danger-light)] p-4"
+        >
+          <p className="text-sm font-semibold text-[var(--color-danger)]">
+            Check failed
+          </p>
+          <p className="text-sm text-[var(--color-ink)] mt-1">{error}</p>
+        </div>
+      )}
+
+      {/* ─── Result ─── */}
+      {result && level && (
+        <section className="mt-10">
+          <div
+            className="border-l-[6px] bg-white border border-[var(--color-line)] p-5 md:p-6 flex flex-col md:flex-row md:items-center gap-6"
+            style={{ borderLeftColor: `var(--color-${accent})` }}
+          >
+            <div className="flex-1">
+              <p
+                className="text-[12px] font-semibold uppercase tracking-[0.1em]"
+                style={{ color: `var(--color-${accent})` }}
               >
-                {result.prediction === "scam" ? (
-                  <XCircle className="w-4 h-4" />
-                ) : (
-                  <CheckCircle className="w-4 h-4" />
-                )}
-                {result.prediction === "scam" ? "Scam Detected" : "Legitimate"}
-              </span>
-              <span className="text-sm text-gray-500">
-                Confidence: {(result.confidence * 100).toFixed(1)}%
-              </span>
+                {isScam ? "Likely scam" : "Looks legitimate"}
+              </p>
+              <h2 className="mt-1 text-2xl font-semibold text-[var(--color-ink)] tracking-tight">
+                {isScam
+                  ? "Don't reply. Don't click any links."
+                  : "No scam patterns detected."}
+              </h2>
+              <p className="mt-2 text-[15px] text-[var(--color-ink-muted)] leading-relaxed">
+                {isScam
+                  ? "This message matches phrasing we have seen in UK pharmacy phishing and fake-NHS texts. If you've already clicked a link or shared details, act quickly using the steps below."
+                  : "Our model did not find phrases that match known scam patterns. This is a risk indication only — always verify the sender separately if the message asks for money or personal details."}
+              </p>
+              <p className="mt-3 text-[12px] text-[var(--color-ink-faint)]">
+                Model confidence:{" "}
+                <span className="font-mono text-[var(--color-ink)]">
+                  {(result.confidence * 100).toFixed(1)}%
+                </span>
+              </p>
+            </div>
+            <div className="shrink-0">
+              <RiskScoreGauge score={result.riskScore} size="md" />
             </div>
           </div>
 
-          <ExplainabilityPanel
-            type="lime"
-            limeHighlights={result.limeHighlights}
-          />
-
-          <p className="text-xs text-gray-400 text-center">
-            Words highlighted in red contributed most to the scam
-            classification. Green words suggest legitimacy.
+          {/* Token-level explanation */}
+          <h3 className="mt-10 text-lg font-semibold text-[var(--color-ink)]">
+            Explanation
+          </h3>
+          <p className="mt-1 text-sm text-[var(--color-ink-muted)] leading-relaxed">
+            These are the words and phrases that most influenced the
+            classification. Hover any word for its contribution weight.
           </p>
-        </div>
+          <div className="mt-3">
+            <ExplainabilityPanel
+              type="lime"
+              limeHighlights={result.limeHighlights}
+            />
+          </div>
+
+          {/* What to do next */}
+          <div className="mt-8 bg-white border border-[var(--color-line)] p-5">
+            <h3 className="text-lg font-semibold text-[var(--color-ink)]">
+              What to do next
+            </h3>
+            <ul className="mt-3 space-y-2 text-[15px] text-[var(--color-ink-muted)] leading-relaxed">
+              {isScam ? (
+                <>
+                  <li>
+                    • Forward the text to{" "}
+                    <span className="font-semibold text-[var(--color-ink)]">
+                      7726
+                    </span>{" "}
+                    (the free UK spam-reporting number — it spells SPAM).
+                  </li>
+                  <li>
+                    • Do not click any links in the message. If you already
+                    did and entered card details, contact your bank now.
+                  </li>
+                  <li>
+                    • Report it to{" "}
+                    <a
+                      href="https://www.actionfraud.police.uk/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="prose-link"
+                    >
+                      Action Fraud
+                    </a>
+                    .
+                  </li>
+                  <li>
+                    • If the message claimed to be from the NHS, a pharmacy
+                    or your GP, contact them directly using a number you
+                    already trust — not one from the message.
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    • Even when a message looks fine, never share bank or NHS
+                    login details because a text asked you to.
+                  </li>
+                  <li>
+                    • The NHS will never ask for payment in an SMS to verify
+                    your account.
+                  </li>
+                  <li>
+                    • When in doubt, forward the message to{" "}
+                    <span className="font-semibold text-[var(--color-ink)]">
+                      7726
+                    </span>{" "}
+                    — reporting is free.
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
+        </section>
       )}
     </div>
   );
